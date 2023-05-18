@@ -66,31 +66,52 @@ export function ItemsContextProvider({ children }) {
     }
 
 
-        // get all completed items by the user
-        const getInactiveItems = async () => {
-            setLoading(true);
-            try {
-                // get the currently user logged in
-                const user = supabase.auth.user();
+    // get all completed items by the user
+    const getInactiveItems = async () => {
+        setLoading(true);
+        try {
+            // get the currently user logged in
+            const user = supabase.auth.user();
 
-                const { error, data } = await supabase
-                    .from('ToDoList')   // table you want to work with
-                    .select('item', done, id) // columns to select from the database
-                    .eq('userId', user?.id) // comparison function to return only data with the user id matching the current logged in user
-                    .eq('done', true) // check if the done column is equal to false
-                    .order('', { ascending: false }) // sort the data so the last item comes on top
-    
-    
-                if (error) throw error // check if there was an error fetching the data and move the executuon to catch block
-    
-                if (data) setInactiveItems(data);
-            } catch (error) {
-                alert(error.error_description || error.message);
-            } finally {
-                setLoading(false);
-            }
+            const { error, data } = await supabase
+                .from('ToDoList')   // table you want to work with
+                .select('item', done, id) // columns to select from the database
+                .eq('userId', user?.id) // comparison function to return only data with the user id matching the current logged in user
+                .eq('done', true) // check if the done column is equal to true
+                .order('', { ascending: false }) // sort the data so the last item comes on top
+
+
+            if (error) throw error // check if there was an error fetching the data and move the executuon to catch block
+
+            if (data) setInactiveItems(data);
+        } catch (error) {
+            alert(error.error_description || error.message);
+        } finally {
+            setLoading(false);
         }
+    }
 
-        
+    // delete row from the database
+    const deleteItem = async () => {
+        setLoading(true);
+        try {
+            // get the currently user logged in
+            const user = supabase.auth.user();
+
+            const { error } = await supabase
+                .from('ToDoList')   // table you want to work with
+                .delete() // delete the row
+                .eq('id', id) // the id of the row to delete
+                .eq('userId', user?.id) // check if the item being deleted belongs to the user
+
+            if (error) throw error // check if there was an error fetching the data and move the executuon to catch block
+
+            await getInactiveItems(); // get the new completed items list
+            await getActiveItems(); // get the new active items list
+
+        } catch (error) {
+            alert(error.error_description || error.message);
+        }
+    }
 
 }
