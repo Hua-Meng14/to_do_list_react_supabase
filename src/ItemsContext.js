@@ -114,4 +114,28 @@ export function ItemsContextProvider({ children }) {
         }
     }
 
+    // add new row to the database
+    const addItem = async (item) => {
+        setLoading(true);
+        try {
+            // get the currently user logged in
+            const user = supabase.auth.user();
+
+            const { error } = await supabase
+                .from('ToDoList')   // table you want to work with
+                .insert({ item, userId: user?.id }); // insert an object with the key value pair, the key being the column on the table
+
+            if (error) throw error // check if there was an error fetching the data and move the executuon to catch block
+
+            await getActiveItems(); // get the new active items list
+
+        } catch (error) {
+            alert(error.error_description || error.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+
+
 }
