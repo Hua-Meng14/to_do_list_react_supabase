@@ -1,24 +1,37 @@
 import logo from './logo.svg';
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.css'
+import { useEffect } from 'react';
+import { Route, useHistory, withRouter, Switch } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Home from './pages/Home'
+import Login from './pages/Login'
+import { supabase } from './supabaseClient'
 
 function App() {
+
+  const history = useHistory();
+
+  useEffect(() => {
+    supabase.auth.onAuthStateChange((_event, session) => {
+      if (session === null) {
+        history.replace("/login");
+      } else {
+        history.replace("/");
+      }
+    });
+  }, []);
+  const NavbarWithRouter = withRouter((props) => <Navbar {...props} />);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <NavbarWithRouter exact />
+      <Switch>
+        <Route exact path='/' components={Home} />
+        <Route exact path='/login' components={Login} />
+      </Switch>
+
+    </>
   );
 }
 
