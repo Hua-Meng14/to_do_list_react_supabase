@@ -41,7 +41,7 @@ export function ItemsContextProvider({ children }) {
         }
     }
 
-    // get all active items by tge yser
+    // get all active items by the user
     const getActiveItems = async () => {
         setLoading(true);
         try {
@@ -64,5 +64,33 @@ export function ItemsContextProvider({ children }) {
             setLoading(false);
         }
     }
+
+
+        // get all completed items by the user
+        const getInactiveItems = async () => {
+            setLoading(true);
+            try {
+                // get the currently user logged in
+                const user = supabase.auth.user();
+
+                const { error, data } = await supabase
+                    .from('ToDoList')   // table you want to work with
+                    .select('item', done, id) // columns to select from the database
+                    .eq('userId', user?.id) // comparison function to return only data with the user id matching the current logged in user
+                    .eq('done', true) // check if the done column is equal to false
+                    .order('', { ascending: false }) // sort the data so the last item comes on top
+    
+    
+                if (error) throw error // check if there was an error fetching the data and move the executuon to catch block
+    
+                if (data) setInactiveItems(data);
+            } catch (error) {
+                alert(error.error_description || error.message);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        
 
 }
