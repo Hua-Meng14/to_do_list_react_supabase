@@ -136,6 +136,29 @@ export function ItemsContextProvider({ children }) {
         }
     }
 
+    // update column(s) on the database
+    const updateItem = async ({ item, id }) => {
+        setLoading(true);
+        try {
+            // get the currently user logged in
+            const user = supabase.auth.user();
+
+            const { error } = await supabase
+                .from('ToDoList')   // table you want to work with
+                .update({ item })
+                .eq('userId', user?.id)
+                .eq('id', id) // maching id of row to update
+
+            if (error) throw error // check if there was an error fetching the data and move the executuon to catch block
+
+            await getActiveItems()
+        } catch (error) {
+            alert(error.error_description || error.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
 
 
 }
