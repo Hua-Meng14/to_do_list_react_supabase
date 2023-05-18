@@ -159,6 +159,54 @@ export function ItemsContextProvider({ children }) {
         }
     }
 
+    // change value of done to true
+    const markAsDone = async (id) => {
+        setLoading(true);
+        try {
+            // get the currently user logged in
+            const user = supabase.auth.user();
+
+            const { error, data } = await supabase
+                .from('ToDoList')   // table you want to work with
+                .update({ done: true })
+                .eq('userId', user?.id)
+                .eq('id', id) // match id to toggle
+
+
+            if (error) throw error // check if there was an error fetching the data and move the executuon to catch block
+
+            await getActiveItems();
+        } catch (error) {
+            alert(error.error_description || error.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    // change value of done to false
+    const markAsActive = async (id) => {
+        setLoading(true);
+        try {
+            // get the currently user logged in
+            const user = supabase.auth.user();
+
+            const { error, data } = await supabase
+                .from('ToDoList')   // table you want to work with
+                .update({ done: false })
+                .eq('userId', user?.id)
+                .eq('id', id) // match id to toggle
+
+
+            if (error) throw error // check if there was an error fetching the data and move the executuon to catch block
+
+            await getInactiveItems();
+        } catch (error) {
+            alert(error.error_description || error.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
 
 
 }
