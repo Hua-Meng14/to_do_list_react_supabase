@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ItemsContext } from "../ItemsContext";
 import { supabase } from "../supabaseClient";
 
 export default function Login() {
-    const history = useHistory();
+    const nagivate = useNavigate();
     const [email, setEmail] = useState('');
     const { loading, logInAccount } = useContext(ItemsContext);
 
@@ -15,7 +15,7 @@ export default function Login() {
 
     useEffect(() => {
         if (supabase.auth.user() !== null) {
-            history.replace('/');
+            nagivate.replace('/');
         }
     }, [])
 

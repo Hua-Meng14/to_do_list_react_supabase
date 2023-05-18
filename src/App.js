@@ -2,37 +2,35 @@ import logo from './logo.svg';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css'
 import { useEffect } from 'react';
-import { Route, useHistory, withRouter, Switch } from 'react-router-dom';
+import { Route, useNavigate, useLocation, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home'
 import Login from './pages/Login'
 import { supabase } from './supabaseClient'
 
 function App() {
-
-  const history = useHistory();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     supabase.auth.onAuthStateChange((_event, session) => {
       if (session === null) {
-        history.replace("/login");
+        navigate("/login");
       } else {
-        history.replace("/");
+        navigate("/");
       }
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const NavbarWithRouter = withRouter((props) => <Navbar {...props} />);
 
   return (
     <>
-      <NavbarWithRouter exact />
-      <Switch>
-        <Route exact path='/' components={Home} />
-        <Route exact path='/login' components={Login} />
-      </Switch>
-
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
     </>
   );
 }
-
 export default App;
