@@ -7,7 +7,7 @@ export const ItemsContext = createContext();
 export function ItemsContextProvider({ children }) {
     const [activeItems, setActiveItems] = useState([]);
     const [inactiveItems, setInactiveItems] = useState([]);
-    const [loadin, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [adding, setAdding] = useState(false);
 
     // Authenticate function for loggin in new/old user with supabase magic link
@@ -207,6 +207,26 @@ export function ItemsContextProvider({ children }) {
         }
     }
 
-
+    return (
+        <ItemsContext.Provider
+            value={{
+                activeItems,
+                inactiveItems,
+                loading,
+                adding,
+                logInAccount,
+                logOutAccount,
+                getActiveItems,
+                getInactiveItems,
+                deleteItem,
+                addItem,
+                updateItem,
+                markAsActive,
+                markAsDone
+            }}
+        >
+            {children}
+        </ItemsContext.Provider>
+    );
 
 }
